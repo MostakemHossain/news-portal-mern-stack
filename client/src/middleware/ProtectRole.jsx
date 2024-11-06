@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import { Navigate, Outlet } from "react-router-dom"
 
 
 const ProtectRole = ({ role }) => {
     const userInfo = {
         name: "Mostakem",
-        role: "admin"
+        role: "writer"
     }
     if (userInfo.role === role) {
         return <Outlet />
