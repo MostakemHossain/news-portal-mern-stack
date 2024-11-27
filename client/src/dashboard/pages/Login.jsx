@@ -1,11 +1,15 @@
-import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import { base_url } from "../../config/config";
-import toast from "react-hot-toast"
-import { useState } from "react";
+import storeContext from "../../context/storeContext";
 
 const Login = () => {
-    const [loader,setLoader]= useState(false);
+    const navigate = useNavigate();
+    const { dispatch } = useContext(storeContext);
+    const [loader, setLoader] = useState(false);
 
     const {
         register,
@@ -13,14 +17,27 @@ const Login = () => {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = async(value) => {
-       try {
-        const {data}= await axios.post(`${base_url}/api/login`,value);
-        console.log(data)
-        
-       } catch (error) {
-        console.log(error)
-       }
+    const onSubmit = async (value) => {
+        try {
+            setLoader(true)
+            const { data } = await axios.post(`${base_url}/api/login`, value);
+            console.log(data)
+            setLoader(false)
+            localStorage.setItem("newsToken", data.token)
+            toast.success(data.message);
+            dispatch({
+                type: "login_success",
+                payload: {
+                    token: data.token
+                }
+            })
+            navigate("/dashboard")
+
+
+        } catch (error) {
+            setLoader(false)
+            toast.error(error.response.data.message)
+        }
     };
 
 
@@ -89,10 +106,13 @@ const Login = () => {
 
                     {/* Submit Button */}
                     <button
+                        disabled={loader}
                         type="submit"
                         className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
                     >
-                        Login
+                        {
+                            loader ? "Loading..." : "Login"
+                        }
                     </button>
                 </form>
 
