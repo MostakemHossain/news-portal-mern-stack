@@ -5,10 +5,7 @@ import storeContext from "../context/storeContext"
 
 const ProtectDashboard = () => {
     const { store } = useContext(storeContext)
-    const userInfo = {
-        name: "Mostakem",
-        role: "admin"
-    }
+
     if (store.userInfo) {
         return <Outlet />
     } else {
